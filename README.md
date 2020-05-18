@@ -1,4 +1,4 @@
-# learning_ui
+# Flutter app template
 
 A new Flutter project.
 
