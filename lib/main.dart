@@ -1,9 +1,15 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
+
+// Global variable that containt my character stats, equipements, infos...
+//import 'global.dart' as global;
+
+// Individual components
+import 'composants/caracTable.dart';
+import 'composants/basicInfos.dart';
+import 'composants/equipment.dart';
+import 'composants/talentsTraits.dart';
+import 'composants/competencesTable.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,224 +19,106 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
       initialRoute: '/',
       routes: {
-        // When navigating to the "/" route, build the FirstScreen widget.
-        '/': (context) => HomeScreen(),
-        // When navigating to the "/second" route, build the SecondScreen widget.
-        '/second': (context) => SecondRoute(),
+        // When navigating to the "/" route, build the FicheWidget widget.
+        '/': (context) => FicheWidget(),
+        // When navigating to the "/second" route, build the TalentsCompetences widget.
+        '/second': (context) => TalentsCompetences(),
       },
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    Color color = Theme.of(context).primaryColor;
-
-    Column _buildButtonColumn(Color color, IconData icon, String label) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color),
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: color,
-              ),
-            ),
-          ),
-        ],
-      );
-    }
-
-    Widget titleSection = Container(
-      padding: const EdgeInsets.all(32),
-      child: Row(
-        children: [
-          Expanded(
-            /*1*/
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /*2*/
-                Container(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    'Oeschinen Lake Campground',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Text(
-                  'Kandersteg, Switzerland',
-                  style: TextStyle(
-                    color: Colors.grey[500],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          /*3*/
-          FavoriteWidget(),
-        ],
-      ),
-    );
-
-    Widget buttonSection = Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildButtonColumn(color, Icons.call, 'CALL'),
-          _buildButtonColumn(color, Icons.near_me, 'ROUTE'),
-          _buildButtonColumn(color, Icons.share, 'SHARE'),
-        ],
-      ),
-    );
-
-    Widget textSection = Container(
-      padding: const EdgeInsets.all(32),
-      child: Text(
-        'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
-        'Alps. Situated 1,578 meters above sea level, it is one of the '
-        'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
-        'half-hour walk through pastures and pine forest, leads you to the '
-        'lake, which warms to 20 degrees Celsius in the summer. Activities '
-        'enjoyed here include rowing, and riding the summer toboggan run.',
-        softWrap: true,
-      ),
-    );
-
-    return MaterialApp(
-      title: 'Flutter layout demo',
-      home: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: AppBar(
-            actions: <Widget>[
-              new IconButton(
-                  icon: new Icon(Icons.share),
-                  onPressed: () {
-                    Share.share('check out my website https://example.com');
-                  }),
-            ],
-            bottom: TabBar(
-              tabs: [
-                Tab(icon: Icon(Icons.directions_car)),
-                Tab(icon: Icon(Icons.directions_transit)),
-              ],
-            ),
-            title: Text('Flutter layout demo'),
-          ),
-          body: TabBarView(
-            children: [
-              ListView(children: [
-                Image.asset(
-                  'images/lake.jpg',
-                  width: 600,
-                  height: 240,
-                  fit: BoxFit.cover,
-                ),
-                titleSection,
-                buttonSection,
-                textSection,
-              ]),
-              Icon(Icons.directions_transit),
-            ],
-          ),
-          drawer: Drawer(
-            // Add a ListView to the drawer. This ensures the user can scroll
-            // through the options in the drawer if there isn't enough vertical
-            // space to fit everything.
-            child: ListView(
-              // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                DrawerHeader(
-                  child: Text('Drawer Header'),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                  ),
-                ),
-                ListTile(
-                  title: Text('Item 1'),
-                  onTap: () {
-                    Navigator.pushNamed(context, '/second');
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class SecondRoute extends StatelessWidget {
+//------------------------------------------------------------------------------
+//------------------------------Main screen-------------------------------------
+//------------------------------------------------------------------------------
+class FicheWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Second Route"),
+        actions: <Widget>[
+          new IconButton(
+              icon: new Icon(Icons.share),
+              onPressed: () {
+                Share.share('check out my website https://example.com');
+              }),
+        ],
+        title: Text("Fiche de personnage"),
       ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Go back!'),
+
+      // List of widgets used in the main screen :
+      body: ListView(
+          children: [basicInfos, caracTable, equipement, talentsTraits]),
+
+      // Navigation drawer :
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text(''),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+            ),
+            ListTile(
+              title: Text('Compétences et talents'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.pushNamed(context, '/second');
+              },
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class FavoriteWidget extends StatefulWidget {
-  @override
-  _FavoriteWidgetState createState() => _FavoriteWidgetState();
-}
-
-class _FavoriteWidgetState extends State<FavoriteWidget> {
-  bool _isFavorited = true;
-  int _favoriteCount = 41;
+//------------------------------------------------------------------------------
+//------------------------------Second screen-----------------------------------
+//------------------------------------------------------------------------------
+class TalentsCompetences extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: EdgeInsets.all(0),
-          child: IconButton(
-            icon: (_isFavorited ? Icon(Icons.star) : Icon(Icons.star_border)),
-            color: Colors.red[500],
-            onPressed: _toggleFavorite,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: TabBar(
+            tabs: [
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text(
+                  "Compétences",
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text(
+                  "Talents",
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        SizedBox(
-          width: 18,
-          child: Container(
-            child: Text('$_favoriteCount'),
-          ),
+        body: TabBarView(
+          children: [
+            ListView(
+              children: [competencesTable],
+            ),
+            Center(child: Text("Talents")),
+          ],
         ),
-      ],
+      ),
     );
-  }
-
-  void _toggleFavorite() {
-    setState(() {
-      if (_isFavorited) {
-        _favoriteCount -= 1;
-        _isFavorited = false;
-      } else {
-        _favoriteCount += 1;
-        _isFavorited = true;
-      }
-    });
   }
 }
